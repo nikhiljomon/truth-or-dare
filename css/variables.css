@@ -1,0 +1,77 @@
+/* Theme color, font, and radius variables shared by the interface. */
+    /* ==========================================================================
+    FLAT DESIGN SYSTEM: CSS VARIABLES
+       ========================================================================== */
+    :root {
+      --font-stack: Arial, Helvetica, sans-serif;
+      --font-display: Arial, Helvetica, sans-serif;
+      --font-body: Arial, Helvetica, sans-serif;
+
+      /* Light Mode Colors */
+      --bg-body: #f5f5f0;
+      --bg-card: #ffffff;
+      --bg-input: #ffffff;
+      --bg-subtle: #eaeaea;
+      --bg-hover: #ebebeb;
+      --bg-active: #dedede;
+      --bg-disabled: #dddddd;
+
+      --text-main: #111111;
+      --text-sub: #555555;
+      --text-secondary: #555555;
+      --text-muted: #777777;
+      --text-disabled: #888888;
+      --text-inverse: #ffffff;
+
+      --border-color: #cccccc;
+      --border-dark: #111111;
+      --bg-glass-border: #cccccc;
+
+      /* Single Accent Color: Tomato Red */
+      --accent-color: #e63946;
+      --accent-hover: #c92a37;
+      --accent-active: #a8202d;
+      --dare-base: #e63946;
+      --truth-base: #111111;
+      --accent-gold: #e63946;
+
+      /* Modal Overlay */
+      --modal-overlay-bg: rgba(0, 0, 0, 0.45);
+
+      /* Flat Corner Radii (max 4px) */
+      --radius: 4px;
+      --radius-sm: 2px;
+    }
+
+    /* Dark Mode Variable Overrides */
+    [data-theme="dark"] {
+      --bg-body: #161616;
+      --bg-card: #222222;
+      --bg-input: #2a2a2a;
+      --bg-subtle: #2d2d2d;
+      --bg-hover: #363636;
+      --bg-active: #404040;
+      --bg-disabled: #333333;
+
+      --text-main: #f5f5f0;
+      --text-sub: #b0b0b0;
+      --text-secondary: #b0b0b0;
+      --text-muted: #888888;
+      --text-disabled: #666666;
+      --text-inverse: #111111;
+
+      --border-color: #3e3e3e;
+      --border-dark: #f5f5f0;
+      --bg-glass-border: #3e3e3e;
+
+      /* Accent Color (Tomato Red) */
+      --accent-color: #e63946;
+      --accent-hover: #f04d5c;
+      --accent-active: #c92a37;
+      --dare-base: #e63946;
+      --truth-base: #f5f5f0;
+      --accent-gold: #e63946;
+
+      /* Modal Overlay */
+      --modal-overlay-bg: rgba(0, 0, 0, 0.7);
+    }

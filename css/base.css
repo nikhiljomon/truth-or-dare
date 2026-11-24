@@ -1,0 +1,124 @@
+/* Global reset, page typography, and primary layout rules. */
+    /* ==========================================================================
+  GLOBAL RESETS & FLAT BASE STYLES
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      box-shadow: none !important;
+      text-shadow: none !important;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      min-height: 100vh;
+      font-family: var(--font-stack);
+      color: var(--text-main);
+      background-color: var(--bg-body) !important;
+      background-image: none !important;
+      line-height: 1.5;
+    }
+
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Layout Container */
+    .app-container {
+      max-width: 640px;
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ==========================================================================
+      HEADER & NAVIGATION
+       ========================================================================== */
+    header.game-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 1.25rem;
+      margin-bottom: 1.75rem;
+      border-bottom: 1px solid var(--border-color);
+      gap: 0.5rem;
+    }
+
+    .brand-title {
+      font-family: var(--font-stack);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-main);
+      background: none !important;
+      -webkit-text-fill-color: var(--text-main) !important;
+      user-select: none;
+      cursor: pointer;
+    }
+
+    .brand-title span.logo-icon {
+      animation: none !important;
+      display: inline-block;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .icon-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .icon-btn:hover {
+      background: var(--bg-hover);
+      border-color: var(--border-dark);
+      transform: none !important;
+    }
+
+    .icon-btn:active {
+      background: var(--bg-active);
+      transform: none !important;
+    }
+
+    .icon-btn:focus-visible {
+      outline: 2px solid var(--border-dark);
+      outline-offset: 1px;
+    }
+
+    /* Screen Views */
+    .view-screen {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .view-screen.hidden {
+      display: none !important;
+    }
