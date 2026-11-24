@@ -65,6 +65,17 @@
         gameState.customPrompts = JSON.parse(savedCustom);
         updateCustomPromptsBadge();
       }
+
+      const savedPlayers = localStorage.getItem('tod_players');
+      if (savedPlayers) {
+        const parsed = JSON.parse(savedPlayers);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          gameState.players = parsed;
+          renderPlayerRoster();
+          updateStartButtonState();
+          if (typeof updateLiveScores === 'function') updateLiveScores();
+        }
+      }
     } catch (e) {
       console.warn('Storage load error:', e);
     }

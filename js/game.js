@@ -79,6 +79,7 @@
       id: Date.now() + Math.random(),
       name: trimmed,
       color: color,
+      points: 0,
       truths: 0,
       dares: 0,
       skips: 0,
@@ -86,16 +87,26 @@
     };
 
     gameState.players.push(player);
+    saveGameScores();
     gameState.sound.playClick();
     renderPlayerRoster();
     updateStartButtonState();
+    if (typeof updateLiveScores === 'function') updateLiveScores();
   }
 
   function removePlayer(id) {
     gameState.players = gameState.players.filter(p => p.id !== id);
+    if (gameState.currentPlayerIndex >= gameState.players.length) {
+      gameState.currentPlayerIndex = 0;
+    }
+    saveGameScores();
     gameState.sound.playClick();
     renderPlayerRoster();
     updateStartButtonState();
+    if (typeof updateLiveScores === 'function') updateLiveScores();
+    if (document.getElementById('modal-scoreboard')?.classList.contains('active')) {
+      renderScoreboard();
+    }
   }
 
   function renderPlayerRoster() {
@@ -196,6 +207,7 @@
 
     // Round counter
     document.getElementById('game-round-pill').textContent = `Round ${gameState.turnRound} • Turn ${gameState.turnCount}`;
+    if (typeof updateLiveScores === 'function') updateLiveScores();
 
     // Active mode pill
     const modeConfig = {
@@ -230,7 +242,8 @@
     document.getElementById('card-watermark-text').textContent = type === 'truth' ? 'TRUTH' : 'DARE';
 
     document.getElementById('active-prompt-text').textContent = `"${prompt.text}"`;
-    document.getElementById('prompt-target-player').textContent = `Challenge for ${getCurrentPlayer().name}`;
+    const curP = getCurrentPlayer();
+    document.getElementById('prompt-target-player').textContent = `Challenge for ${curP.name} (${curP.points || 0} pts)`;
 
     const customBadge = document.getElementById('prompt-custom-badge');
     if (prompt.isCustom) {
@@ -264,15 +277,22 @@
     isProcessingTurn = true;
     setTurnButtonsDisabled(true);
 
+    const earned = gameState.currentPrompt.type === 'truth' ? SCORING_CONFIG.truthDone : SCORING_CONFIG.dareDone;
     if (gameState.currentPrompt.type === 'truth') {
       player.truths++;
     } else {
       player.dares++;
     }
+    player.points = (player.points || 0) + earned;
+
+    saveGameScores();
+    if (typeof updateLiveScores === 'function') updateLiveScores();
 
     gameState.sound.playSuccess();
-    gameState.confetti.burst(window.innerWidth / 2, window.innerHeight * 0.45, 110);
-    showToast(`Awesome! ${player.name} completed the ${gameState.currentPrompt.type}!`, '🎉');
+    if (gameState.confetti) {
+      gameState.confetti.burst(window.innerWidth / 2, window.innerHeight * 0.45, 110);
+    }
+    showToast(`Awesome! ${player.name} completed the ${gameState.currentPrompt.type}! (+${earned} pts)`, '🎉');
 
     setTimeout(() => {
       advanceTurn();
@@ -311,6 +331,11 @@
     setTurnButtonsDisabled(true);
 
     player.skips++;
+    const prevPoints = player.points || 0;
+    player.points = Math.max(SCORING_CONFIG.minScore, prevPoints - SCORING_CONFIG.skipPenalty);
+    saveGameScores();
+    if (typeof updateLiveScores === 'function') updateLiveScores();
+
     gameState.sound.playSkip();
 
     // Pick random forfeit
@@ -458,4 +483,42 @@
         updateGameTurnUI();
       }, 1500);
     }, 3600);
+  }
+
+  function endGame() {
+    if (gameState.players.length === 0) return;
+
+    const sorted = [...gameState.players].sort((a, b) => (b.points || 0) - (a.points || 0));
+    const topScore = sorted[0].points || 0;
+    const leaders = sorted.filter(p => (p.points || 0) === topScore);
+
+    let winnerMsg = '';
+    if (leaders.length > 1) {
+      winnerMsg = `Winner: ${leaders.map(l => l.name).join(' & ')} (Tie - ${topScore} pts)`;
+    } else {
+      winnerMsg = `Winner: ${leaders[0].name} (${topScore} pts)`;
+    }
+
+    gameState.sound.playSuccess();
+    if (gameState.confetti && topScore > 0) {
+      gameState.confetti.burst(window.innerWidth / 2, window.innerHeight * 0.45, 120);
+    }
+
+    showToast(`🏁 Game Over! ${winnerMsg}`, '🏆');
+
+    const instructionEl = document.getElementById('turn-instruction-subtext');
+    if (instructionEl) {
+      instructionEl.textContent = `🏆 Game Over! ${winnerMsg}`;
+    }
+
+    renderScoreboard(true, winnerMsg);
+    openModal('modal-scoreboard');
+  }
+
+  function handlePlayAgain() {
+    resetPlayerScores();
+    resetUsedPrompts();
+    closeModal('modal-scoreboard');
+    updateGameTurnUI();
+    showToast('Play Again! Scores reset for all players.', '🔄');
   }

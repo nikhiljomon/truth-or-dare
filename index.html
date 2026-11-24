@@ -36,7 +36,10 @@
         <button class="icon-btn" id="btn-theme-toggle" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">🌙</button>
         <button class="icon-btn" id="btn-open-rules" title="Rules & Settings" aria-label="Settings and Rules">⚙️</button>
         <button class="icon-btn" id="btn-open-custom" title="Custom Prompts" aria-label="Add Custom Prompts">✨</button>
-        <button class="icon-btn" id="btn-open-scores" title="Scoreboard" aria-label="View Scoreboard">🏆</button>
+        <button class="icon-btn btn-scoreboard-header" id="btn-open-scores" title="Scoreboard" aria-label="Scoreboard">
+          <span aria-hidden="true">🏆</span>
+          <span class="btn-scoreboard-text">Scoreboard</span>
+        </button>
       </div>
     </header>
 
@@ -126,14 +129,20 @@
           <span id="game-active-mode-text">Party Mode</span>
         </div>
         <div class="round-counter-pill" id="game-round-pill">Round 1 • Turn 1</div>
-        <button class="icon-btn" id="btn-quick-reset" title="Reset or Exit Game" aria-label="Reset or exit">🔄</button>
+        <div style="display:flex;gap:0.35rem;align-items:center;">
+          <button class="action-btn btn-new-prompt" id="btn-end-game" title="End Game & View Standings" aria-label="End Game" style="padding:0.3rem 0.65rem;font-size:0.8rem;min-height:36px;">
+            <span>🏁 End Game</span>
+          </button>
+          <button class="icon-btn" id="btn-quick-reset" title="Reset or Exit Game" aria-label="Reset or exit">🔄</button>
+        </div>
       </div>
 
       <!-- Turn Announcement -->
       <div class="turn-spotlight">
         <div class="turn-player-avatar" id="current-player-avatar" style="background:#00d2ff;">A</div>
-        <h2 class="turn-prompt-title">It's <span id="current-player-name" class="player-highlight">Alex</span>'s Turn!</h2>
+        <h2 class="turn-prompt-title">It's <span id="current-player-name" class="player-highlight">Alex</span>'s Turn! <span class="current-player-score-pill" id="current-player-live-score">0 pts</span></h2>
         <p class="turn-subtext" id="turn-instruction-subtext">Will you reveal a secret or take a wild dare?</p>
+        <div class="game-live-scores" id="game-live-scores" aria-label="Live Scores"></div>
       </div>
 
       <!-- Stage 1: Big Choice (Truth vs Dare) -->
@@ -286,27 +295,33 @@
         <button class="modal-close-btn" id="btn-close-scores" aria-label="Close">✕</button>
       </div>
       <div class="modal-body">
-        <table class="scoreboard-table" id="scoreboard-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Player</th>
-              <th>Truths</th>
-              <th>Dares</th>
-              <th>Skips</th>
-              <th>Score</th>
-            </tr>
-          </thead>
-          <tbody id="scoreboard-tbody">
-            <!-- Dynamically rendered -->
-          </tbody>
-        </table>
+        <div id="scoreboard-winner-banner" class="scoreboard-winner-banner hidden"></div>
+        <div class="scoreboard-table-wrap">
+          <table class="scoreboard-table" id="scoreboard-table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Player</th>
+                <th scope="col">Points</th>
+                <th scope="col">Truths</th>
+                <th scope="col">Dares</th>
+                <th scope="col">Skips</th>
+              </tr>
+            </thead>
+            <tbody id="scoreboard-tbody">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
 
         <div id="scoreboard-empty-note" style="text-align:center;color:var(--text-muted);padding:2rem 0;display:none;">
           No turns played yet! Start the game to see stats.
         </div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="display:flex;gap:0.5rem;justify-content:flex-end;">
+        <button class="action-btn btn-done" id="btn-play-again" style="padding:0.6rem 1.25rem;font-size:0.9rem;">
+          <span>🔄 Play Again</span>
+        </button>
         <button class="action-btn btn-new-prompt" id="btn-close-scores-footer" style="padding:0.6rem 1.25rem;">
           Close
         </button>

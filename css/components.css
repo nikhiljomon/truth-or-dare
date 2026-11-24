@@ -950,8 +950,16 @@
     /* ==========================================================================
        SCOREBOARD STYLES
        ========================================================================== */
+    .scoreboard-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 0.5rem;
+    }
+
     .scoreboard-table {
       width: 100%;
+      min-width: 420px;
       border-collapse: collapse;
       text-align: left;
     }
@@ -963,6 +971,7 @@
       color: var(--text-secondary);
       padding: 0.5rem;
       border-bottom: 2px solid var(--border-color);
+      white-space: nowrap;
     }
 
     .scoreboard-table td {
@@ -971,13 +980,23 @@
       vertical-align: middle;
       font-size: 0.9rem;
       color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .scoreboard-table tr.leader-row {
+      background: var(--bg-hover);
+    }
+
+    .scoreboard-table tr.current-player-row {
+      background: var(--bg-subtle);
+      border-left: 3px solid var(--accent-color);
     }
 
     .scoreboard-rank {
       font-family: var(--font-stack);
       font-weight: 700;
       font-size: 1rem;
-      width: 30px;
+      width: 36px;
       color: var(--text-main);
     }
 
@@ -986,6 +1005,97 @@
       align-items: center;
       gap: 0.5rem;
       font-weight: 600;
+    }
+
+    .badge-leader {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--accent-color);
+      border: 1px solid var(--accent-color);
+      padding: 0.1rem 0.35rem;
+      border-radius: var(--radius-sm);
+      margin-left: 0.35rem;
+    }
+
+    .badge-turn {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      padding: 0.1rem 0.35rem;
+      border-radius: var(--radius-sm);
+      margin-left: 0.35rem;
+    }
+
+    .scoreboard-winner-banner {
+      background: var(--bg-card);
+      border: 1px solid var(--accent-color);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--accent-color);
+      margin-bottom: 1rem;
+    }
+
+    .scoreboard-winner-banner.hidden {
+      display: none;
+    }
+
+    /* Live Game Scores */
+    .game-live-scores {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      justify-content: center;
+      margin: 0.5rem 0 0.85rem;
+    }
+
+    .live-score-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.55rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .live-score-pill.active {
+      border-color: var(--border-dark);
+      background: var(--bg-hover);
+    }
+
+    .live-score-pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .current-player-score-pill {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-color);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      padding: 0.15rem 0.45rem;
+      border-radius: var(--radius-sm);
+      margin-left: 0.35rem;
+      vertical-align: middle;
+    }
+
+    .icon-btn.btn-scoreboard-header {
+      width: auto;
+      padding: 0 0.65rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      gap: 0.35rem;
     }
 
     /* Square score badge */

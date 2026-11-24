@@ -1,6 +1,19 @@
 // Shared player and game state, plus state reset and escaping helpers.
   /**
    * ============================================================================
+   * SCORING CONFIGURATION
+   * Easy to adjust point values across the entire game
+   * ============================================================================
+   */
+  const SCORING_CONFIG = {
+    truthDone: 1,
+    dareDone: 2,
+    skipPenalty: 1,
+    minScore: 0
+  };
+
+  /**
+   * ============================================================================
    * GAME STATE & CONTROLLER
    * ============================================================================
    */
@@ -10,7 +23,7 @@
   ];
 
   const gameState = {
-    players: [], // { id, name, color, truths: 0, dares: 0, skips: 0, forfeits: 0 }
+    players: [], // { id, name, color, points: 0, truths: 0, dares: 0, skips: 0, forfeits: 0 }
     currentPlayerIndex: 0,
     activeMode: 'party', // 'family' | 'party' | 'spicy'
     turnRound: 1,
@@ -53,8 +66,17 @@
     };
   }
 
+  function saveGameScores() {
+    try {
+      localStorage.setItem('tod_players', JSON.stringify(gameState.players));
+    } catch (e) {
+      console.warn('Could not save scores to localStorage:', e);
+    }
+  }
+
   function resetPlayerScores() {
     gameState.players.forEach(p => {
+      p.points = 0;
       p.truths = 0;
       p.dares = 0;
       p.skips = 0;
@@ -64,4 +86,5 @@
     gameState.turnRound = 1;
     gameState.turnCount = 1;
     gameState.currentPrompt = null;
+    saveGameScores();
   }

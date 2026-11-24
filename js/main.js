@@ -98,13 +98,23 @@
     document.getElementById('bottle-svg').addEventListener('click', spinBottle);
     document.getElementById('btn-close-bottle').addEventListener('click', () => closeModal('modal-bottle'));
 
-    // Scoreboard Modal
+    // Scoreboard Modal & Actions
     document.getElementById('btn-open-scores').addEventListener('click', () => {
       renderScoreboard();
       openModal('modal-scoreboard');
     });
     document.getElementById('btn-close-scores').addEventListener('click', () => closeModal('modal-scoreboard'));
     document.getElementById('btn-close-scores-footer').addEventListener('click', () => closeModal('modal-scoreboard'));
+
+    const btnEndGame = document.getElementById('btn-end-game');
+    if (btnEndGame) {
+      btnEndGame.addEventListener('click', endGame);
+    }
+
+    const btnPlayAgain = document.getElementById('btn-play-again');
+    if (btnPlayAgain) {
+      btnPlayAgain.addEventListener('click', handlePlayAgain);
+    }
 
     // Rules & Settings Modal
     document.getElementById('btn-open-rules').addEventListener('click', () => openModal('modal-rules'));
@@ -183,6 +193,7 @@
     document.getElementById('btn-full-reset-all').addEventListener('click', () => {
       if (confirm('Are you sure you want to completely reset the game? This will clear all players, scores, and history.')) {
         gameState.players = [];
+        saveGameScores();
         resetUsedPrompts();
         resetPlayerScores();
         closeModal('modal-reset');
@@ -190,6 +201,7 @@
         document.getElementById('setup-view').classList.remove('hidden');
         renderPlayerRoster();
         updateStartButtonState();
+        if (typeof updateLiveScores === 'function') updateLiveScores();
         showToast('Full reset complete: all players and data cleared', '🗑️');
       }
     });

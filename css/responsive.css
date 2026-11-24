@@ -6,6 +6,16 @@
       .app-container {
         padding: 1rem 0.75rem 2rem;
       }
+      .icon-btn.btn-scoreboard-header {
+        width: 36px;
+        padding: 0;
+      }
+      .btn-scoreboard-text {
+        display: none;
+      }
+      .scoreboard-table-wrap {
+        overflow-x: auto;
+      }
       .brand-title {
         font-size: 1.15rem;
       }

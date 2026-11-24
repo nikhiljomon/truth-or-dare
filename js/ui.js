@@ -224,31 +224,112 @@
 
   /**
    * ============================================================================
-   * SCOREBOARD RENDERING
+   * SCOREBOARD RENDERING & LIVE SCORES
    * ============================================================================
    */
-  function renderScoreboard() {
+  function updateLiveScores() {
+    const curPlayer = gameState.players[gameState.currentPlayerIndex];
+
+    const curScoreEl = document.getElementById('current-player-live-score');
+    if (curScoreEl) {
+      curScoreEl.textContent = `${curPlayer ? (curPlayer.points || 0) : 0} pts`;
+    }
+
+    const promptTargetEl = document.getElementById('prompt-target-player');
+    if (promptTargetEl && curPlayer) {
+      promptTargetEl.textContent = `Challenge for ${curPlayer.name} (${curPlayer.points || 0} pts)`;
+    }
+
+    const liveScoresBar = document.getElementById('game-live-scores');
+    if (liveScoresBar) {
+      if (gameState.players.length === 0) {
+        liveScoresBar.innerHTML = '';
+        return;
+      }
+      liveScoresBar.innerHTML = gameState.players.map(p => {
+        const isCurrent = curPlayer && p.id === curPlayer.id;
+        return `
+          <span class="live-score-pill ${isCurrent ? 'active' : ''}">
+            <span class="live-score-pill-dot" style="background:${p.color};"></span>
+            <span>${escapeHTML(p.name)}:</span>
+            <strong>${p.points || 0} pts</strong>
+          </span>
+        `;
+      }).join('');
+    }
+  }
+
+  function renderScoreboard(isFinal = false, winnerMsg = '') {
     const tbody = document.getElementById('scoreboard-tbody');
+    if (!tbody) return;
     tbody.innerHTML = '';
+
+    const winnerBanner = document.getElementById('scoreboard-winner-banner');
+    const modalTitle = document.getElementById('modal-score-title');
 
     if (gameState.players.length === 0) {
       document.getElementById('scoreboard-empty-note').style.display = 'block';
+      if (winnerBanner) winnerBanner.classList.add('hidden');
       return;
     }
     document.getElementById('scoreboard-empty-note').style.display = 'none';
 
-    // Sort by total score (truths + dares completed)
+    // Sort by points (highest first); secondary tie-breaker (truths + dares)
     const sorted = [...gameState.players].sort((a, b) => {
-      const scoreA = a.truths + a.dares;
-      const scoreB = b.truths + b.dares;
-      return scoreB - scoreA;
+      const ptsA = a.points || 0;
+      const ptsB = b.points || 0;
+      if (ptsB !== ptsA) {
+        return ptsB - ptsA;
+      }
+      return (b.truths + b.dares) - (a.truths + a.dares);
     });
 
+    const topScore = sorted[0].points || 0;
+    const leaders = sorted.filter(p => (p.points || 0) === topScore);
+
+    if (winnerBanner) {
+      if (winnerMsg || isFinal) {
+        const text = winnerMsg || (leaders.length > 1
+          ? `🏆 Winner: ${leaders.map(l => escapeHTML(l.name)).join(' & ')} (Tie - ${topScore} pts)`
+          : `🏆 Winner: ${escapeHTML(leaders[0].name)} (${topScore} pts)`);
+        winnerBanner.innerHTML = text;
+        winnerBanner.classList.remove('hidden');
+        if (modalTitle) modalTitle.textContent = '🏆 Final Standings';
+      } else if (topScore > 0) {
+        const text = leaders.length > 1
+          ? `Current Leaders: ${leaders.map(l => escapeHTML(l.name)).join(' & ')} (${topScore} pts)`
+          : `Current Leader: ${escapeHTML(leaders[0].name)} (${topScore} pts)`;
+        winnerBanner.innerHTML = `👑 ${text}`;
+        winnerBanner.classList.remove('hidden');
+        if (modalTitle) modalTitle.textContent = '🏆 Party Scoreboard';
+      } else {
+        winnerBanner.classList.add('hidden');
+        if (modalTitle) modalTitle.textContent = '🏆 Party Scoreboard';
+      }
+    }
+
+    const curPlayer = gameState.players[gameState.currentPlayerIndex];
+    let currentRank = 1;
+
     sorted.forEach((p, idx) => {
+      // Standard tie-ranking: same points share the exact same rank
+      if (idx > 0 && (p.points || 0) < (sorted[idx - 1].points || 0)) {
+        currentRank = idx + 1;
+      }
+
+      const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
+      const rankDisplay = medals[currentRank] || currentRank;
+      const isLeader = (p.points || 0) === topScore && (topScore > 0 || sorted.length === 1);
+      const isCurrent = curPlayer && p.id === curPlayer.id;
+
       const tr = document.createElement('tr');
-      const medals = ['🥇', '🥈', '🥉'];
-      const rankDisplay = medals[idx] || (idx + 1);
-      const totalScore = p.truths + p.dares;
+      const classes = [];
+      if (isLeader) classes.push('leader-row');
+      if (isCurrent) classes.push('current-player-row');
+      if (classes.length > 0) tr.className = classes.join(' ');
+
+      const leaderBadge = isLeader ? '<span class="badge-leader" title="Current Leader">👑 Leader</span>' : '';
+      const turnBadge = isCurrent ? '<span class="badge-turn" title="Current Turn">Turn</span>' : '';
 
       tr.innerHTML = `
         <td class="scoreboard-rank">${rankDisplay}</td>
@@ -256,12 +337,14 @@
           <div class="scoreboard-player-info">
             <span class="player-avatar-circle" style="background:${p.color};width:24px;height:24px;font-size:0.75rem;">${escapeHTML(p.name.charAt(0))}</span>
             <span>${escapeHTML(p.name)}</span>
+            ${leaderBadge}
+            ${turnBadge}
           </div>
         </td>
-        <td>💬 ${p.truths}</td>
-        <td>⚡ ${p.dares}</td>
-        <td style="color:#f87171;">⚠️ ${p.skips}</td>
-        <td><span class="stat-badge stat-badge-score">${totalScore} pts</span></td>
+        <td><span class="stat-badge stat-badge-score">${p.points || 0} pts</span></td>
+        <td>💬 ${p.truths || 0}</td>
+        <td>⚡ ${p.dares || 0}</td>
+        <td style="color:var(--accent-color);">⚠️ ${p.skips || 0}</td>
       `;
       tbody.appendChild(tr);
     });
